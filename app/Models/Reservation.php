@@ -9,38 +9,24 @@ class Reservation extends Model
 {
     protected $table = 'reservations';
 
-    public $timestamps = true; 
-    const UPDATED_AT = null; 
+    public $timestamps = true;
 
     protected $fillable = [
         'user_id',
-        'nama_pelanggan',
-        'nomor_wa',
-        'jadwal_reservasi', // Diubah dari jam_mulai
-        'id_service',
-        'status'
+        'name',
+        'phone',
+        'service',
+        'date',
+        'time',
+        'status',
     ];
 
     protected $casts = [
-        // Pastikan casting menggunakan nama kolom yang baru
-        'jadwal_reservasi' => 'datetime:Y-m-d H:i',
+        'date' => 'date',
     ];
 
-    /**
-     * Relasi ke Tabel User
-     * Setiap reservasi dimiliki oleh satu User (Pelanggan)
-     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    /**
-     * Relasi ke Tabel Service
-     * Setiap reservasi merujuk pada satu jenis layanan
-     */
-    public function service(): BelongsTo
-    {
-        return $this->belongsTo(Service::class, 'id_service');
     }
 }

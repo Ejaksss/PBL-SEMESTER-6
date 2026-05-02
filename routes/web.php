@@ -18,3 +18,11 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+use App\Http\Controllers\AdminController;
+
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+    Route::get('/reservations', [AdminController::class, 'reservations'])->name('reservations');
+    Route::put('/reservations/{id}/status', [AdminController::class, 'updateStatus'])->name('reservations.status');
+    Route::delete('/reservations/{id}', [AdminController::class, 'deleteReservation'])->name('reservations.delete');
+});
