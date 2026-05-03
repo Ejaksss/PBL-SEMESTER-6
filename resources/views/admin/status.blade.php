@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard — Mr. Brokker</title>
+    <title>Manajemen Status — Mr. Brokker</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -24,9 +24,8 @@
 
 <div class="flex min-h-screen">
 
-    <!-- SIDEBAR -->
+    <!-- SIDEBAR (sama persis dengan dashboard) -->
     <aside class="w-64 shrink-0 flex flex-col" style="background:#111; border-right: 1px solid #222;">
-        <!-- Logo -->
         <div class="px-6 py-6 border-b border-gray-800">
             <div class="flex items-center gap-3">
                 <div class="w-9 h-9 bg-[#EAB308] rounded-lg flex items-center justify-center shrink-0">
@@ -39,7 +38,6 @@
             </div>
         </div>
 
-        <!-- Nav -->
         <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
             <p class="text-gray-600 text-xs font-semibold uppercase tracking-wider px-3 mb-2">Menu Utama</p>
 
@@ -75,15 +73,13 @@
                 Laporan
             </a>
 
-            {{-- ✅ DITAMBAHKAN: menu Status --}}
             <a href="{{ route('admin.status') }}"
-               class="sidebar-link {{ request()->routeIs('admin.status') ? 'active' : '' }} flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium {{ request()->routeIs('admin.status') ? 'text-[#EAB308]' : 'text-gray-400' }}">
+               class="sidebar-link active flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[#EAB308]">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
                 Status
             </a>
         </nav>
 
-        <!-- User Info -->
         <div class="px-4 py-4 border-t border-gray-800">
             <div class="flex items-center gap-3">
                 <div class="w-8 h-8 rounded-full bg-[#EAB308] flex items-center justify-center text-black font-bold text-sm">
@@ -104,32 +100,22 @@
         </div>
     </aside>
 
-    <!-- MAIN CONTENT (tidak berubah) -->
+    <!-- MAIN CONTENT -->
     <main class="flex-1 overflow-auto">
 
         <!-- Header -->
         <div class="px-8 py-6 border-b border-gray-800 flex items-center justify-between" style="background:#111;">
             <div>
-                <h1 class="text-xl font-bold font-display text-white">Dashboard</h1>
-                <p class="text-gray-500 text-sm mt-0.5">Selamat datang, {{ auth()->user()->name }}!</p>
+                <h1 class="text-xl font-bold font-display text-white">Manajemen Status</h1>
+                <p class="text-gray-500 text-sm mt-0.5">Kelola status setiap reservasi pelanggan</p>
             </div>
             <div class="text-gray-500 text-sm">{{ now()->format('l, d F Y') }}</div>
         </div>
 
         <div class="px-8 py-8">
 
-            <!-- Stat Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-                <div class="stat-card p-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <p class="text-gray-400 text-sm">Total Reservasi</p>
-                        <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background:rgba(234,179,8,0.15);">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EAB308" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-                        </div>
-                    </div>
-                    <p class="text-3xl font-bold text-white font-display">{{ $totalReservasi }}</p>
-                    <p class="text-gray-500 text-xs mt-1">Semua waktu</p>
-                </div>
+            <!-- Mini Stat Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-8">
                 <div class="stat-card p-6">
                     <div class="flex items-center justify-between mb-4">
                         <p class="text-gray-400 text-sm">Menunggu</p>
@@ -137,7 +123,7 @@
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EAB308" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
                         </div>
                     </div>
-                    <p class="text-3xl font-bold text-white font-display">{{ $pending }}</p>
+                    <p class="text-3xl font-bold text-white font-display">{{ $reservations->where('status','pending')->count() }}</p>
                     <p class="text-gray-500 text-xs mt-1">Perlu ditindaklanjuti</p>
                 </div>
                 <div class="stat-card p-6">
@@ -147,7 +133,7 @@
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22,4 12,14.01 9,11.01"/></svg>
                         </div>
                     </div>
-                    <p class="text-3xl font-bold text-white font-display">{{ $confirmed }}</p>
+                    <p class="text-3xl font-bold text-white font-display">{{ $reservations->where('status','confirmed')->count() }}</p>
                     <p class="text-gray-500 text-xs mt-1">Berhasil dikonfirmasi</p>
                 </div>
                 <div class="stat-card p-6">
@@ -157,58 +143,18 @@
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
                         </div>
                     </div>
-                    <p class="text-3xl font-bold text-white font-display">{{ $cancelled }}</p>
+                    <p class="text-3xl font-bold text-white font-display">{{ $reservations->where('status','cancelled')->count() }}</p>
                     <p class="text-gray-500 text-xs mt-1">Reservasi dibatalkan</p>
                 </div>
             </div>
 
-            <!-- Quick Actions -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-                <a href="{{ route('admin.antrian') }}" class="stat-card p-5 flex items-center gap-4 hover:border-[#EAB308] group no-underline">
-                    <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0" style="background:rgba(234,179,8,0.1);">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EAB308" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                    </div>
-                    <div>
-                        <p class="text-white text-sm font-semibold">Antrian Hari Ini</p>
-                        <p class="text-gray-500 text-xs">Kelola jadwal antrian</p>
-                    </div>
-                    <svg class="ml-auto text-gray-600 group-hover:text-[#EAB308] transition" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9,18 15,12 9,6"/></svg>
-                </a>
-                <a href="{{ route('admin.layanan') }}" class="stat-card p-5 flex items-center gap-4 hover:border-[#EAB308] group no-underline">
-                    <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0" style="background:rgba(234,179,8,0.1);">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EAB308" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-                    </div>
-                    <div>
-                        <p class="text-white text-sm font-semibold">Kelola Layanan</p>
-                        <p class="text-gray-500 text-xs">Tambah & edit layanan</p>
-                    </div>
-                    <svg class="ml-auto text-gray-600 group-hover:text-[#EAB308] transition" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9,18 15,12 9,6"/></svg>
-                </a>
-                <a href="{{ route('admin.laporan') }}" class="stat-card p-5 flex items-center gap-4 hover:border-[#EAB308] group no-underline">
-                    <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0" style="background:rgba(234,179,8,0.1);">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EAB308" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-                    </div>
-                    <div>
-                        <p class="text-white text-sm font-semibold">Laporan Bulanan</p>
-                        <p class="text-gray-500 text-xs">Lihat pendapatan & statistik</p>
-                    </div>
-                    <svg class="ml-auto text-gray-600 group-hover:text-[#EAB308] transition" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9,18 15,12 9,6"/></svg>
-                </a>
-            </div>
-
-            <!-- Recent Reservations -->
+            <!-- Table -->
             <div class="stat-card p-6">
                 <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-lg font-bold font-display">Reservasi Terbaru</h2>
-                    <a href="{{ route('admin.reservations') }}" class="text-[#EAB308] text-sm hover:underline">Lihat Semua →</a>
+                    <h2 class="text-lg font-bold font-display">Daftar Reservasi</h2>
+                    <span class="text-gray-500 text-sm">{{ $reservations->count() }} total</span>
                 </div>
-                @php $recent = \App\Models\Reservation::latest()->take(5)->get(); @endphp
-                @if($recent->isEmpty())
-                    <div class="text-center py-12 text-gray-500">
-                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mx-auto mb-3 opacity-40"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
-                        <p>Belum ada reservasi</p>
-                    </div>
-                @else
+
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm">
                         <thead>
@@ -217,10 +163,11 @@
                                 <th class="text-left text-gray-500 font-medium pb-3">Layanan</th>
                                 <th class="text-left text-gray-500 font-medium pb-3">Tanggal</th>
                                 <th class="text-left text-gray-500 font-medium pb-3">Status</th>
+                                <th class="text-left text-gray-500 font-medium pb-3">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-800">
-                            @foreach($recent as $r)
+                            @foreach($reservations as $r)
                             <tr>
                                 <td class="py-3 text-white font-medium">{{ $r->name }}</td>
                                 <td class="py-3 text-gray-400">{{ $r->service }}</td>
@@ -234,12 +181,32 @@
                                         <span class="px-2 py-1 rounded-full text-xs font-semibold" style="background:rgba(234,179,8,0.15);color:#EAB308;">Menunggu</span>
                                     @endif
                                 </td>
+                                <td class="py-3">
+                                    <form action="{{ route('admin.reservations.status', $r->id) }}" method="POST" class="flex gap-2 items-center">
+                                        @csrf
+                                        @method('PUT')
+                                        <select name="status" class="bg-[#111] border border-gray-700 rounded px-2 py-1 text-sm text-white">
+                                            <option value="pending" {{ $r->status === 'pending' ? 'selected' : '' }}>Pending</option>
+                                            <option value="confirmed" {{ $r->status === 'confirmed' ? 'selected' : '' }}>Confirmed</option>
+                                            <option value="cancelled" {{ $r->status === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                                        </select>
+                                        <button class="bg-[#EAB308] text-black px-3 py-1 rounded text-xs font-bold hover:opacity-90 transition">
+                                            Update
+                                        </button>
+                                    </form>
+                                </td>
                             </tr>
                             @endforeach
                         </tbody>
                     </table>
+
+                    @if($reservations->isEmpty())
+                        <div class="text-center py-12 text-gray-500">
+                            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mx-auto mb-3 opacity-40"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                            <p>Belum ada data reservasi</p>
+                        </div>
+                    @endif
                 </div>
-                @endif
             </div>
 
         </div>

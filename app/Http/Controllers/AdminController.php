@@ -172,7 +172,12 @@ public function laporan(Request $request)
         'perLayanan', 'grafikHarian', 'detailTransaksi'
     ));
 }
+public function status()
+{
+    $reservations = \App\Models\Reservation::latest()->get();
 
+    return view('admin.status', compact('reservations'));
+}
 
 }
 
