@@ -41,11 +41,8 @@ Coming Soon
 
 As Backend Developer, I contributed to:
 
-- Booking feature
 - Operational schedule management
-- Database design
 - Booking validation
-- WhatsApp notification
 - Admin dashboard improvements
 
 ## Installation
