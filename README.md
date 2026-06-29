@@ -19,7 +19,7 @@ A web-based barbershop reservation system developed using Laravel. This project 
 
 - Laravel 12
 - PHP 8.3
-- MySQL
+- Postgree sql
 - Tailwind CSS
 - JavaScript
 - Git
