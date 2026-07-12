@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\GaleriController;
+use App\Http\Controllers\Auth\GoogleController;
 
 // ✅ HALAMAN UTAMA
 Route::get('/', function () {
@@ -105,3 +106,9 @@ Route::middleware(['auth', 'admin'])
         Route::delete('/galeri/{id}', [GaleriController::class, 'destroy'])
             ->name('galeri.destroy');
     });
+
+    // Route untuk memicu redirect login ke Google via Supabase
+        Route::get('/auth/google', [GoogleController::class, 'redirectToGoogle'])->name('auth.google');
+
+        // Route Callback untuk menerima pengalihan kembali dari Supabase setelah sukses login
+        Route::get('/auth/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('auth.google.callback');
