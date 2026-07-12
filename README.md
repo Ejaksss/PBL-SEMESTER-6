@@ -19,7 +19,7 @@ A web-based barbershop reservation system developed using Laravel. This project 
 
 - Laravel 12
 - PHP 8.3
-- MySQL
+- Postgree sql
 - Tailwind CSS
 - JavaScript
 - Git
@@ -41,11 +41,8 @@ Coming Soon
 
 As Backend Developer, I contributed to:
 
-- Booking feature
 - Operational schedule management
-- Database design
 - Booking validation
-- WhatsApp notification
 - Admin dashboard improvements
 
 ## Installation
