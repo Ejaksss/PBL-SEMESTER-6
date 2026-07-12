@@ -176,8 +176,11 @@
     if (str_starts_with($phone, '0')) {
         $phone = '62' . substr($phone, 1);
     }
-    
-    $waUrl = "https://wa.me/{$phone}?text=" . urlencode("Halo {$r->nama}, kami dari Mr. Brokker Barbershop ingin mengonfirmasi antrian Anda pada jam {$r->jam}.");
+
+    // Format tanggal untuk ditampilkan di pesan WhatsApp
+    $tanggalFormatted = \Carbon\Carbon::parse($r->tanggal)->locale('id')->isoFormat('dddd, D MMMM Y');
+
+    $waUrl = "https://wa.me/{$phone}?text=" . urlencode("Halo {$r->nama}, kami dari Mr. Brokker Barbershop ingin mengonfirmasi antrian Anda pada tanggal {$tanggalFormatted} jam {$r->jam}.");
 
     // Satukan tanggal hari ini dengan jam booking pelanggan menggunakan timezone yang dikunci
     $waktuBookingFull = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $r->tanggal . ' ' . $r->jam, $timezone);
@@ -189,12 +192,12 @@
     // JIKA sekarang LEBIH KECIL (LT) dari waktu booking, berarti belum lewat
     if ($sekarang->lt($waktuBookingFull)) {
         $teksTombol = "Kirim Pengingat ({$selisihJamAbsolut} Jam Lagi)";
-        $pesanWhatsapp = "Halo {$r->nama}, ini pengingat otomatis dari Mr. Brokker Barbershop. Jadwal booking Anda adalah hari ini pada jam *{$r->jam}*.\n\n" .
+        $pesanWhatsapp = "Halo {$r->nama}, ini pengingat otomatis dari Mr. Brokker Barbershop. Jadwal booking Anda adalah pada tanggal *{$tanggalFormatted}* jam *{$r->jam}*.\n\n" .
                          "*Catatan Penting:* Batas maksimal keterlambatan kehadiran adalah *5 menit*. Jika melewati batas keterlambatan tersebut, maka booking Anda akan dianggap *HANGUS* oleh sistem. Terima kasih.";
     } else {
         // Jika sudah sama atau melewati waktu booking
         $teksTombol = "Peringatan Keterlambatan";
-        $pesanWhatsapp = "Halo {$r->nama}, jadwal booking Anda pada jam *{$r->jam}* saat ini terpantau sudah berjalan.\n\n" .
+        $pesanWhatsapp = "Halo {$r->nama}, jadwal booking Anda pada tanggal *{$tanggalFormatted}* jam *{$r->jam}* saat ini terpantau sudah berjalan.\n\n" .
                          "Kami mengingatkan kembali bahwa batas maksimal toleransi keterlambatan adalah *5 menit*. Jika Anda melewati batas waktu tersebut dan belum melakukan check-in di toko, maka booking Anda otomatis dianggap *HANGUS*. Terima kasih.";
     }
 
@@ -212,7 +215,6 @@
                                 <div class="flex items-center gap-2">
                                     <p class="text-white font-semibold text-base">{{ $r->nama }}</p>
                                     @if($isNow && $r->status === 'confirmed')
-                                        <span class="badge pulse" style="background:rgba(34,197,94,0.2);color:#22c55e;">🟢 Sedang Dilayani</span>
                                     @endif
                                 </div>
                                 <p class="text-gray-400 text-sm mt-0.5">{{ $r->layanan }}</p>
@@ -288,9 +290,12 @@
                             @php
                                 $phoneMendatang = preg_replace('/[^0-9]/', '', $r->whatsapp);
                                 if (str_starts_with($phoneMendatang, '0')) { $phoneMendatang = '62' . substr($phoneMendatang, 1); }
+
+                                // Format tanggal untuk pesan reservasi mendatang
+                                $tanggalMendatangFormatted = \Carbon\Carbon::parse($r->tanggal)->locale('id')->isoFormat('dddd, D MMMM Y');
                                 
                                 // Sinkronisasi aturan hangus 5 menit pada tabel reservasi mendatang
-                                $pesanMendatang = "Halo {$r->nama}, kami dari Mr. Brokker mengonfirmasi reservasi Anda tanggal {$r->tanggal} jam {$r->jam}.\n\n" .
+                                $pesanMendatang = "Halo {$r->nama}, kami dari Mr. Brokker mengonfirmasi reservasi Anda tanggal {$tanggalMendatangFormatted} jam {$r->jam}.\n\n" .
                                                   "*Catatan Penting:* Batas maksimal keterlambatan kehadiran adalah *5 menit*. Jika melewati batas keterlambatan tersebut, maka booking Anda akan dianggap *HANGUS* oleh sistem.";
                                 $waUrlMendatang = "https://wa.me/{$phoneMendatang}?text=" . urlencode($pesanMendatang);
                             @endphp
